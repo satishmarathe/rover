@@ -1,9 +1,5 @@
 package com.rover;
 
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,20 +9,30 @@ import com.rover.common.ConstantsIfc;
 import com.rover.factory.CommandFactory;
 import com.rover.notify.Notification;
 import com.rover.service.Command;
+import com.rover.utilities.FileUtility;
 
 public class RoverSolution {
 	//private static final LOGGER = Logger.getLogger(RoverSolution.class.getName());
 	public static void main(String[] args) {
-		new RoverSolution().process();		
+		RoverSolution roverSolution = new RoverSolution();
+		/** read input file **/
+		List<String> fileRows ;
+		
+		try{
+			fileRows = FileUtility.readFile(ConstantsIfc.FILE_NAME);
+		}catch(Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		roverSolution.process(fileRows);		
 	}
 	
-	public void process() {
+	public void process(List<String> fileRows) {
 		try {
 			
 			/** read input file **/
-			List<String> fileRows = readFile(ConstantsIfc.FILE_NAME);
-			
-			System.out.println("hello 2");
+			//List<String> fileRows = readFile(ConstantsIfc.FILE_NAME);
 			
 			/** validate to ensure file is good **/
 			Notification notification = validate(fileRows);
@@ -82,13 +88,14 @@ public class RoverSolution {
 							break;
 						}
 					}//for each char in instruction
-					
-					/** if we are here all the instructions are good and executed now wait for user to enter next instruction **/
-					printPlateau(fileRows);
-					/** wait for user input **/
-					System.out.println(ConstantsIfc.PROMPT_MSG);
-					System.out.println(ConstantsIfc.PROMPT);
-					instruction = userInputScan.nextLine();					
+					if(keepRunning) {
+						/** if we are here all the instructions are good and executed now wait for user to enter next instruction **/
+						printPlateau(fileRows);
+						/** wait for user input **/
+						System.out.println(ConstantsIfc.PROMPT_MSG);
+						System.out.println(ConstantsIfc.PROMPT);
+						instruction = userInputScan.nextLine();	
+					}									
 				}
 			}//while
 			
@@ -133,11 +140,7 @@ public class RoverSolution {
 		return plateauConfigMap;
 	}
 	
-	public List<String> readFile(String fileName) throws IOException{
-		//String fileNameWithPath = FileSystems.getDefault().getPath(".").toAbsolutePath() + ".\\resources\\" + fileName;
-		String fileNameWithPath = FileSystems.getDefault().getPath(".").toAbsolutePath() + "\\src\\main\\resources\\" + fileName;
-		return Files.readAllLines(Paths.get(fileNameWithPath));
-	}
+	
 	
 	public Notification validate(List<String> fileRows) {
 		Notification notification = new Notification();
