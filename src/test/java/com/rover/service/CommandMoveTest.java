@@ -30,6 +30,8 @@ public class CommandMoveTest {
 		command.setPlateauRows(plateau);
 		command.setRover(new Rover(0,0,'E'));
 		command.setPlateauConfigMap(getMap(plateau));
+		/** explicitly setting to 0 to validate error count behaviour **/
+		command.setErrorCommandCount(0);
 		
 		System.out.println("----- before move instruction -------");
 		printPlateau(plateau);
@@ -142,6 +144,34 @@ public class CommandMoveTest {
 		printPlateau(plateau);
 		System.out.println("---- Rover orientation = " + command.getRover().getOrientation());
 		System.out.println("----- successfully moved rover -------");
+	}
+	
+	@Test
+	@DisplayName("Rover error count of commands should be calculated correctly ")
+	public void shouldCalculateErrorCount() {
+		Command command = CommandFactory.getCommand('M');
+		assertTrue( command instanceof CommandMove);
+		
+		/** input file **/
+		List<String> plateau = new ArrayList<>();
+		plateau.add("oRooooRRRR");
+		plateau.add("ooRooooooo");
+		plateau.add("ooooooRRoo");
+		
+		command.setPlateauRows(plateau);
+		command.setRover(new Rover(0,0,'E'));
+		command.setPlateauConfigMap(getMap(plateau));
+		
+		/** setting a number to which  further increment should occur **/ 
+		command.setErrorCommandCount(6);
+		
+		System.out.println("----- before move instruction -------");
+		printPlateau(plateau);
+		System.out.println("---- Rover orientation = " + command.getRover().getOrientation());
+		/** should not move Rover **/
+		command.execute();
+		
+		assertTrue(command.getErrorCommandCount() == 7);
 	}
 	
 	private Map<String,Character> getMap(List<String> rows) {
