@@ -12,6 +12,8 @@ To compile the code simply run the command at root of project:
 
 This should successfully compile the code and build a jar : mars-rover-1.0.0-RELEASE.jar
 
+Code coverage can be seen via index.html that gets built within target folder.
+
 To run the code run following command:
 java -cp .;<path_to>\mars-rover-1.0.0-RELEASE.jar  com.rover.RoverSolution
 
